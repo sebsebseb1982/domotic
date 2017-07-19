@@ -1,0 +1,5 @@
+node_modules
+**/secret.js
+**/cameras.js
+**/lamps.js
+secret.js

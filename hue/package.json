@@ -1,0 +1,8 @@
+{
+  "name": "hue",
+  "version": "1.0.0",
+  "dependencies": {
+    "node-hue-api": "^2.3.0",
+    "mongodb": "^2.2.11"
+  }
+}

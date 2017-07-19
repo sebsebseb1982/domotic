@@ -1,0 +1,13 @@
+{
+  "name": "rfxtrx433",
+  "version": "1.0.0",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "lodash": "^4.16.4",
+    "node-rest-client": "^2.0.1",
+    "pg": "^6.1.0",
+    "pg-native": "^1.10.0",
+    "rfxcom": "^0.12.0"
+  }
+}

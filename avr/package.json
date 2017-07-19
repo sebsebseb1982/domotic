@@ -1,0 +1,10 @@
+{
+  "name": "avr",
+  "version": "1.0.0",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "moment": "^2.17.1",
+    "node-rest-client": "^2.0.1",
+    "xml2json": "^0.10.0"
+  }
+}

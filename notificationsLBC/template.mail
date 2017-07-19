@@ -1,0 +1,21 @@
+<table style="width:30%" border="1">
+  {{#items}}
+	<tr>
+		<td>
+		  {{#professional}}
+			<p><strong style="background-color: red;color: white;padding: 5px;border-radius: 8px;">PRO</strong></p>
+		  {{/professional}}
+			<a href="{{url}}">
+				<p>{{name}}</p>
+				<img src="{{imgUrl}}">
+			</a>
+			<p>Recherche : <a href="{{recherche.url}}">{{recherche.name}}</a></p>
+		</td>
+		<td>
+			<p>{{price}}</p>
+			<p>{{place}}</p>
+			<p>{{date}}</p>
+		</td>
+	</tr>
+  {{/items}}
+</table> 

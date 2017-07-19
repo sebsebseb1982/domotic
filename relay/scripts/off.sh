@@ -1,0 +1,1 @@
+sudo echo -e -n "\x00" > /dev/ttyRELAYS

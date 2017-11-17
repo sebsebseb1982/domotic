@@ -15,6 +15,9 @@ let hue			= require('../hue/hue.js');
 let lamps		= require('../hue/lamps.js');
 let wifi		= require('../wifi/wifi.js');
 let thermostat	= require('../thermospi2/thermostat.js');
+let relay		= require('../relay/relay.js');
+let auth 		= require('basic-auth');
+let alarm		= require('../alarm/alarm.js');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -48,26 +51,40 @@ app.use(function(req, res, next) {
 });
 
 router.use((req, res, next) => {
-	console.log('token:',req.headers);
-	let user = _.find(secret.api.users, {token: req.headers.token});
-	if(user) {
-		nma.send({
-			'application' : 'API',
-			'event' : 'Utilisation API par ' + user.name,
-			'description' : req.path,
-			'priority' : 1
-		});
-		next();
+	let credentials = auth(req);
+	
+	if(credentials) {
+		console.log('credentials.name', credentials.name, 'credentials.pass',credentials.pass);
+		let user = _.find(secret.api.users, {name: credentials.name, token: credentials.pass});
+		if(user) {
+			nma.send({
+				'application' : 'API',
+				'event' : 'Utilisation API par ' + user.name + ' (' + req.headers['user-agent'] + ')',
+				'description' : req.path,
+				'priority' : 1
+			});
+			next();
+		} else {
+			nma.send({
+				'application' : 'API',
+				'event' : 'Utilisation API frauduleuse (fake credentials) ' + req.headers['user-agent'],
+				'description' : req.path,
+				'priority' : 1
+			});
+			console.log("Fake credentials");
+			res.send(401);
+		}
 	} else {
 		nma.send({
 			'application' : 'API',
-			'event' : 'Utilisation API frauduleuse',
+			'event' : 'Utilisation API frauduleuse (missing credentials) ' + req.headers['user-agent'],
 			'description' : req.path,
 			'priority' : 1
 		});
-		console.log("Missing token");
-		res.send(403);
+		console.log("Missing credentials");
+		res.send(401);
 	}
+	
 });
 
 router.post(
@@ -130,6 +147,20 @@ router.get(
 	}
 );
 
-app.use('/home', router);
+router.post(
+	'/gate', 
+	(req, res) => {
+		relay.impulse('k3', 100);
+		res.send(200);
+	}
+);
 
+router.post(
+	'/alarm', 
+	(req, res) => {
+		alarm.arm();
+	}
+);
+
+app.use('/home', router);
 app.listen(9051);

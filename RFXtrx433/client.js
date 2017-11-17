@@ -17,13 +17,14 @@ module.exports = {
 		let args = {
 			data: {state:state},
 			headers: { 
-				"Content-Type": "application/json",
-				"token": _.find(secret.api.users, {name:'System'}).token,
+				"Content-Type": "application/json"
 			}
 		};
 
+		let credentials = _.find(secret.api.users, {name:'System'}).name + ":" _.find(secret.api.users, {name:'System'}).token + "@";
+		
 		client.post(
-			'http://localhost:9051/home/outlet/' + outlet.code, 
+			'http://' + credentials + 'localhost:9051/home/outlet/' + outlet.code, 
 			args, 
 			(data, response) => {
 				// parsed response body as js object

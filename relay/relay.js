@@ -29,6 +29,14 @@ module.exports = {
 			}
 		});
 	},
+	impulse : (code, duration) => {
+		db.getByCode(code, (relay) => {
+			executeScript("sudo gpio write " + relay.gpio + " 1");
+			setTimeout(() => {
+				executeScript("sudo gpio write " + relay.gpio + " 0");
+			}, duration);	
+		});
+	},
 	initRelayBoard: () => {
 		db.getAll((relays) => {
 			_.forEach(relays, (relay) => {

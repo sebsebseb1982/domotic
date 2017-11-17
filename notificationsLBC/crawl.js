@@ -51,9 +51,11 @@ let calculerHashItem = (item) => {
 };
 
 let createItemFromDOMElement = (domElement, $, recherche) => {
-	let imgUrl = 'http:' + $(domElement).find('.item_image .item_imagePic span').attr('data-imgsrc');
+	// https://img7.leboncoin.fr/ad-thumb/3c7683f286bc49420cc6a2be1e565473c13d8495.jpg
+	// https://img7.leboncoin.fr/ad-image/3c7683f286bc49420cc6a2be1e565473c13d8495.jpg
+	let imgUrl = $(domElement).find('.item_image .item_imagePic span').attr('data-imgsrc');
 	if(imgUrl) {
-		imgUrl = imgUrl.replace(/thumbs/g, 'images');
+		imgUrl = imgUrl.replace(/thumb/g, 'image');
 	}
 	let now = new Date();
 	

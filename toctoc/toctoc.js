@@ -15,7 +15,7 @@ let execIf = (expectedPresenceStatus, ifCallback, elseCallback) => {
 	getLastPresence((lastPresence) => {
 		if(lastPresence.status === expectedPresenceStatus) {
 			ifCallback();
-		} else if(elseCallback !== null){
+		} else if(elseCallback !== undefined){
 			elseCallback();
 		} else {
 			console.log('Can\'t execute anything !')

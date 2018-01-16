@@ -69,9 +69,12 @@ toctoc.ifAbsent(() => {
 	camerasToSurvey.push(_.find(cameras, {id:2}));
 	camerasToSurvey.push(_.find(cameras, {id:3}));
 	camerasToSurvey.push(_.find(cameras, {id:4}));
+	camerasToSurvey.push(_.find(cameras, {id:5}));
+	camerasToSurvey.push(_.find(cameras, {id:6}));
 	
 	_.forEach(camerasToSurvey, (camera) => {
 		let photos = status.photosSince(camera, since);
+		console.log('camera ' + camera.label + ' ' + photos.length + ' photo(s)')
 		if(photos.length !== 0) {
 			nmaNotification(camera);
 			lightOn();

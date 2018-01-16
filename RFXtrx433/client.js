@@ -4,34 +4,35 @@
 
 let secret = require('../secret.js');
 let _ = require('lodash');
+let http = require('http');
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 module.exports = {
 	switchPowerOutlet : (outlet, state) => {
-	
-		let Client = require('node-rest-client').Client;
-		let client = new Client();
-
-		// set content-type header and data as json in args parameter
-		let args = {
-			data: {state:state},
-			headers: { 
-				"Content-Type": "application/json"
-			}
+		let options = {
+		  hostname: 'localhost',
+		  port: 9051,
+		  path: '/home/outlet/' + outlet.code,
+		  method: 'POST',
+		  headers: {
+			  'Content-Type': 'application/json',
+			  'Authorization': 'Basic ' + new Buffer(_.find(secret.api.users, {name:'System'}).name + ':' + _.find(secret.api.users, {name:'System'}).token, "utf8").toString("base64")
+		  }
 		};
-
-		let credentials = _.find(secret.api.users, {name:'System'}).name + ":" _.find(secret.api.users, {name:'System'}).token + "@";
-		
-		client.post(
-			'http://' + credentials + 'localhost:9051/home/outlet/' + outlet.code, 
-			args, 
-			(data, response) => {
-				// parsed response body as js object
-				console.log(data);
-				// raw response
-				console.log(response);
-			}
-		);
+		let req = http.request(options, function(res) {
+		  console.log('Status: ' + res.statusCode);
+		  console.log('Headers: ' + JSON.stringify(res.headers));
+		  res.setEncoding('utf8');
+		  res.on('data', function (body) {
+			console.log('Body: ' + body);
+		  });
+		});
+		req.on('error', function(e) {
+		  console.log('problem with request: ' + e.message);
+		});
+		// write data to request body
+		req.write('{"state":' + state + '}');
+		req.end();
 	}
 };

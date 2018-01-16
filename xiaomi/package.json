@@ -1,0 +1,7 @@
+{
+  "name": "xiaomi",
+  "version": "1.0.0",
+  "dependencies": {
+    "miio": "^0.14.0"
+  }
+}

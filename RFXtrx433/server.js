@@ -18,6 +18,7 @@ let thermostat	= require('../thermospi2/thermostat.js');
 let relay		= require('../relay/relay.js');
 let auth 		= require('basic-auth');
 let alarm		= require('../alarm/alarm.js');
+let radio		= require('../avr/radio.js');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -51,6 +52,9 @@ app.use(function(req, res, next) {
 });
 
 router.use((req, res, next) => {
+	
+	console.log(req);
+	
 	let credentials = auth(req);
 	
 	if(credentials) {
@@ -135,6 +139,19 @@ router.post(
 	}
 );
 
+router.put(
+	'/thermostat/setpoint', 
+	(req, res) => {
+		let setPoint = parseFloat(req.body.value);
+		assert.notEqual(setPoint, undefined, 'SetPoint undefined !');
+		
+		thermostat.incrementSetPoint(setPoint, (newSetPoint) => {
+			console.log('newSetPoint:',newSetPoint);
+			res.send(200);
+		});
+	}
+);
+
 router.get(
 	'/lamps/:code/state', 
 	(req, res) => {
@@ -159,6 +176,20 @@ router.post(
 	'/alarm', 
 	(req, res) => {
 		alarm.arm();
+	}
+);
+
+router.post(
+	'/radio', 
+	(req, res) => {
+		let state = Boolean(req.body.state);
+		console.log('Switching radio ' + state ? 'ON' : 'OFF');
+		if(state) {
+
+		} else {
+
+		}
+		res.send(200);
 	}
 );
 

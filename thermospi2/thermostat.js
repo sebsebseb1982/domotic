@@ -53,8 +53,9 @@ let update = () => {
 module.exports = {
 	incrementSetPoint: (value, callback) => {
 		db.setPoint.getLast((lastSetPoint) => {
-			db.setPoint.add(lastSetPoint + value);
-			callback(lastSetPoint + value);
+			db.setPoint.add(lastSetPoint + value, () => {
+				callback(lastSetPoint + value);	
+			});
 		});
 	},
 	addSetPoint: (value, callback) => {

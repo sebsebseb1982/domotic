@@ -6,20 +6,14 @@ let avr = require("./avr.js");
 let toctoc = require('../toctoc/toctoc.js');
 let moment = require("moment");
 
-let startAVR = (duration) => {
+let turnONRadio = () => {
 	avr.on();
 
 	// Position Tuner
 	setTimeout(() => {
 		avr.tuner();
+		avr.setVolume(-30);
 	}, 10 * 1000);
-
-	let durationInMs = duration * 60 * 1000 /* ms */;
-	let showEnd = moment().add(durationInMs, 'ms');
-	
-	setTimeout(() => {
-		avr.off();
-	}, showEnd.diff(moment()));	
 };
 
 module.exports = {
@@ -28,23 +22,39 @@ module.exports = {
 	},
 	startTunerOnlyIfPresent : (duration) => {
 		avr.getStatus((status) => {
-			let isAvrStarted = status.item.Power.value === 'ON';
-			console.log('AVR already in use ?', isAvrStarted);
-
-			let retry = 10 * 1000 /* ms */;
-			let ellapsedTime = 0;
-			
-			for (let ellapsedTime = 0; ellapsedTime < duration * 60 * 1000 /* ms */; ellapsedTime += retry) {
+			if(status.item.Power.value === 'ON') {
+				console.log('AVR is already in use !');
+			} else {
+				let retry = 10 * 1000 /* ms */;
+				let ellapsedTime = 0;
+				let isPresent = false;
+				for (let ellapsedTime = 0; ellapsedTime < duration * 60 * 1000 /* ms */; ellapsedTime += retry) {
+					setTimeout(() => {
+						toctoc.ifPresent(
+							// Présent
+							() => {
+								if(!isPresent) {
+									console.log('Turning AVR ON');
+									turnONRadio();
+									isPresent = true;
+								}
+							},
+							// Absent
+							() => {
+								if(isPresent) {
+									console.log('Turning AVR OFF');
+									avr.off();
+									isPresent = false;
+								}
+							}
+						);
+					}, ellapsedTime);
+				}
+				
 				setTimeout(() => {
-					toctoc.ifPresent(() => {
-						if(!isAvrStarted) {
-							startAVR(duration - ellapsedTime);
-							avr.setVolume(-30);
-							isAvrStarted = true;
-						}
-					});
-				}, ellapsedTime);
-			}	
+					avr.off();
+				}, duration * 60 * 1000 /* ms */);	
+			}
 		});
 	}
 };

@@ -65,7 +65,7 @@ let sendPhotos = (camera, photos) => {
 };
 
 toctoc.ifAbsent(() => {
-	let camerasToSurvey = [];
+	let camerasToSurvey = []; 
 	camerasToSurvey.push(_.find(cameras, {id:2}));
 	camerasToSurvey.push(_.find(cameras, {id:3}));
 	camerasToSurvey.push(_.find(cameras, {id:4}));
@@ -77,7 +77,9 @@ toctoc.ifAbsent(() => {
 		console.log('camera ' + camera.label + ' ' + photos.length + ' photo(s)')
 		if(photos.length !== 0) {
 			nmaNotification(camera);
-			lightOn();
+			if(camera.triggerLight) {
+				lightOn();
+			}
 			sendPhotos(camera, photos);
 		}
 	});

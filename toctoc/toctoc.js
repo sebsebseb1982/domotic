@@ -6,6 +6,7 @@ let MongoClient = require('mongodb').MongoClient;
 let exec = require('child_process').exec;
 let assert = require('assert');
 let secret = require('../secret.js');
+let surveillanceStation = require('../synology/surveillanceStation.js');
 
 let url = secret.thermospi.mongo;
 
@@ -24,6 +25,9 @@ let execIf = (expectedPresenceStatus, ifCallback, elseCallback) => {
 };
 
 let saveNewPresenceStatus = (presenceStatus) => {
+	
+	surveillanceStation.setHomeMode(!presenceStatus);
+	
 	MongoClient.connect(url, function(err, db) {
 		assert.equal(null, err);
 		db.collection('presences').insertOne(
@@ -51,7 +55,7 @@ let getLastPresence = (callback) => {
 			(err, result) => {
 				assert.equal(err, null);
 
-				console.log('Last presence :', result);
+				console.log('Maison', result.status ? 'ouverte' : 'fermée');
 				callback(result);
 			
 				db.close();
